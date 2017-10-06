@@ -1,2 +1,5 @@
+# PHP errors - may or may not be generated based on php configuration
 error_log
+
+# web config file - make your own based on config.default.php
 config.php

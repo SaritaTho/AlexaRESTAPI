@@ -1,4 +1,5 @@
 <?php
+	// wrapper around the PDO database
 	class Database {
 		public $dbh;
 		

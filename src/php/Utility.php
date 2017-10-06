@@ -2,6 +2,7 @@
 	include_once __DIR__ . "/../config.php";
 	
 	class Utility {
+		// return a geolocation string from an IP
 		public static function getGeolocation($ip) {
 			global $webconfig;
 			$geolocation_raw = file_get_contents(sprintf($webconfig["geoip"]["api-uri"], $ip));
@@ -16,6 +17,7 @@
 			}
 		}
 		
+		// return a pretty string representing the current timestamp, or the provded one
 		public static function getPrettyTime($timestamp = null) {
 			if (is_null($timestamp)) {
 				$timestamp = time();
