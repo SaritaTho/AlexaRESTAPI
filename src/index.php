@@ -5,11 +5,16 @@
 	include_once "php/Database.php";
 	include_once "php/Auth.php";
 	
-	$database = new Database($webconfig["database"]);
-	$auth = new Auth($database);
-?>
-
-<!DOCTYPE html>
+	$database = null;
+	$auth = null;
+	
+	try {
+		$database = new Database($webconfig["database"]);
+		$auth = new Auth($database);
+	} catch (Exception $e) {
+		error_log($e);
+	}
+?><!DOCTYPE html>
 <html lang="en">
 <head>
 	<title>Alexa REST API</title>
