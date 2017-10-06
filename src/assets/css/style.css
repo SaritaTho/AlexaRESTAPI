@@ -1,0 +1,33 @@
+.success-text {
+	color: #28a745
+}
+
+.warning-text {
+	color: gold;
+}
+
+.neutral-text {
+	color: #007bff;
+}
+
+.top {
+  margin-bottom: -1px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.bottom {
+  /*margin-bottom: 10px;*/
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+.middle {
+	margin-bottom: -1px;
+	border-top-left-radius: 0;
+	border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+	border-bottom-left-radius: 0;
+}
+
+#nav-email {
+	padding-right: 10px;
+}

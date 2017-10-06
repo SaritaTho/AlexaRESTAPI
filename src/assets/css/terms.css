@@ -1,0 +1,17 @@
+.header {
+	margin-top: 40px;
+	margin-bottom: 15px;
+}
+
+.maintext {
+	font-size: 1.3rem;
+}
+
+.maintext br {
+	display: block;
+	margin: 10px 0;
+}
+
+.bottom {
+	margin-bottom: 40px;
+}

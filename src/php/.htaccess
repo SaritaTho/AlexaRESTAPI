@@ -1,0 +1,9 @@
+Deny from all
+
+<files "cron_log">
+	deny from all
+</files>
+
+<Files "Tests.php">
+	allow from all
+</files>

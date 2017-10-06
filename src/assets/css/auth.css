@@ -1,0 +1,41 @@
+body {
+  padding-top: 40px;
+  padding-bottom: 40px;
+  background-color: #eee;
+}
+
+.form-auth {
+  max-width: 400px;
+  padding: 15px;
+  margin: 0 auto;
+}
+.form-auth .form-auth-heading,
+.form-auth .checkbox {
+  margin-bottom: 10px;
+}
+.form-auth .checkbox {
+  font-weight: normal;
+}
+.form-auth .form-control {
+  position: relative;
+  height: auto;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  padding: 10px;
+  font-size: 16px;
+}
+.form-auth .form-control:focus {
+  z-index: 2;
+}
+
+.error {
+	color: crimson;
+}
+
+.hidden {
+	display: none!important;
+}
+
+.notice {
+	margin-left: 7px;
+}
