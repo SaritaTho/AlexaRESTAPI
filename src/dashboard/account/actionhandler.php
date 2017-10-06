@@ -38,7 +38,7 @@
 				complete(true);
 				break;
 			// log out a single token - using the "hash" POST parameter
-			case "logouttoken"
+			case "logouttoken":
 				if (!array_key_exists("hash", $_POST)) {
 					complete(false, "No hash provided.");
 					break;

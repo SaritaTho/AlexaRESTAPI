@@ -1,4 +1,6 @@
-<!DOCTYPE html>
+<?php
+	include_once "../../config.php";
+?><!DOCTYPE html>
 <html lang="en">
 <head>
 	<title>Create Account - Alexa REST API</title>
@@ -38,7 +40,7 @@
 			
 			<br>
 			
-			<div class="g-recaptcha" data-sitekey="6LdjqzEUAAAAAOf4tiMWRU_HpMNO7xr4b4XNLxsP"></div>
+			<div class="g-recaptcha" data-sitekey="<?php echo $webconfig["recaptcha"]["site"]; ?>"></div>
 			
 			<br>
 			
