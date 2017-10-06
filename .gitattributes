@@ -2,3 +2,4 @@ src/assets/css/vendor/* linguist-vendored
 src/assets/js/* linguist-vendored
 src/assets/less/* linguist-vendored
 src/assets/scss/* linguist-vendored
+src/php/thirdparty/* linguist-vendored
