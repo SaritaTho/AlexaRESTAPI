@@ -1,3 +1,7 @@
 <files config.php>
 	Deny from all
 </files>
+
+# replace with php.ini if possible
+php_value error_reporting 30709
+php_value error_log error_log
