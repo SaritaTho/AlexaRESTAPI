@@ -7,9 +7,6 @@
 	include_once "php/Database.php";
 	include_once "php/Auth.php";
 	
-	$database = null;
-	$auth = null;
-	
 	try {
 		$database = new Database($webconfig["database"]);
 		$auth = new Auth($database);
