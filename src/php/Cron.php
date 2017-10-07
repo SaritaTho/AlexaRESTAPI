@@ -18,6 +18,6 @@
 	
 	// i added a letter in front of "log" because "log" is reserved.. idk why i chose 's'
 	function slog($message) {
-		file_put_contents("cron_log", date("Y-M-d.H:m") . " >> " . $message . "\n", FILE_APPEND);
+		file_put_contents("../cron_log", date("Y-M-d.H:m") . " >> " . $message . "\n", FILE_APPEND);
 	}
 ?>

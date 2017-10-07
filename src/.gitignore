@@ -3,3 +3,8 @@ error_log
 
 # web config file - make your own based on config.default.php
 config.php
+
+# cron log
+cron_log
+
+phpinfo.php
