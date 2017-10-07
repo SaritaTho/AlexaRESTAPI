@@ -1,7 +1,11 @@
 <?php
 	$webconfig = [
 		"host" => [
-			"domain" => "alexa.yourdomain.com"
+			"domain" => "alexa.yourdomain.com",
+			"ssl-only" => true,
+		],
+		"authentication" => [
+			"login-lifetime" => 2.6E6	// approx one month
 		],
 		"database" => [
 			"host" => "localhost",

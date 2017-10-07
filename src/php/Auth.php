@@ -186,6 +186,8 @@
 		public function login($userid) {
 			if (is_null($userid)) throw new Exception("User ID cannot be null");
 			
+			global $webconfig;
+			
 			// if user is already logged in, logout before continuing
 			$loggedin = $this->checkUserIsLoggedIn();	// returns token on valid login
 			if ($loggedin) {
@@ -194,7 +196,7 @@
 			}
 			
 			// generate new token using ID
-			$newtoken = $this->generateUserToken($userid, 2.6E6);	// approx one month
+			$newtoken = $this->generateUserToken($userid, $webconfig["authentication"]["login-lifetime"]);
 			$email = $this->getUserEmail($userid);
 			
 			$user = new User($userid, $email, $newtoken);
@@ -236,8 +238,8 @@
 			$_SESSION["email"] = $user->getEmail();
 			$_SESSION["userid"] = $user->getUserId();
 			
-			// assign token to a cookie that expires in one month
-			setcookie("token", $user->getToken(), time()+86400*30, "/", $webconfig["host"]["domain"], true, false);
+			// assign token to a cookie
+			setcookie("token", $user->getToken(), time()+$webconfig["authentication"]["login-lifetime"], "/", $webconfig["host"]["domain"], $webconfig["host"]["ssl-only"], false);
 		}
 		
 		// void a login token and destroy session
