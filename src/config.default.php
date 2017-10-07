@@ -9,7 +9,7 @@
 		],
 		"database" => [
 			"host" => "localhost",
-			"port" => "443",
+			"port" => "3306",
 			"username" => "root",
 			"password" => "",
 			"dbname" => "alexa"
