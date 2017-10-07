@@ -1,3 +1,16 @@
+CREATE TABLE `users` (
+	`userid` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'internal reference only',
+	`email` VARCHAR(100) NOT NULL,
+	`password` VARCHAR(255) NOT NULL COMMENT '60 character hash using bcrypt' COLLATE 'utf8_bin',
+	`registered` BIGINT(20) UNSIGNED NOT NULL COMMENT 'date the user signed up',
+	PRIMARY KEY (`userid`),
+	UNIQUE INDEX `email` (`email`)
+)
+COMMENT='Stores all user data'
+COLLATE='utf8_general_ci'
+ENGINE=InnoDB
+;
+
 CREATE TABLE `accounthistory` (
 	`userid` BIGINT(20) UNSIGNED NOT NULL COMMENT 'user the action is for',
 	`action` INT(10) UNSIGNED NOT NULL COMMENT 'what the action was, see docs for codes',
@@ -5,7 +18,8 @@ CREATE TABLE `accounthistory` (
 	`ip` VARCHAR(45) NOT NULL COMMENT 'supports ipv4 mapped ip46\'s',
 	`location` TEXT NULL COMMENT 'generated based on ip',
 	INDEX `id` (`userid`),
-	INDEX `time` (`time`)
+	INDEX `time` (`time`),
+	CONSTRAINT `ACCOUNTHISTORY_FK_USERID` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON UPDATE CASCADE ON DELETE CASCADE
 )
 COMMENT='Stores account security history for users'
 COLLATE='utf8_general_ci'
@@ -23,22 +37,10 @@ CREATE TABLE `logintokens` (
 	`browser` TEXT NULL COMMENT 'browser info if available',
 	INDEX `expiry` (`expiry`),
 	INDEX `id` (`userid`),
-	INDEX `hash` (`hash`)
+	INDEX `hash` (`hash`),
+	CONSTRAINT `LOGINTOKENS_FK_USERID` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON UPDATE CASCADE ON DELETE CASCADE
 )
 COMMENT='Stores login tokens to keep user sessions.'
-COLLATE='utf8_general_ci'
-ENGINE=InnoDB
-;
-
-CREATE TABLE `users` (
-	`userid` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'internal reference only',
-	`email` VARCHAR(100) NOT NULL,
-	`password` VARCHAR(255) NOT NULL COMMENT '60 character hash using bcrypt' COLLATE 'utf8_bin',
-	`registered` BIGINT(20) UNSIGNED NOT NULL COMMENT 'date the user signed up',
-	PRIMARY KEY (`userid`),
-	UNIQUE INDEX `email` (`email`)
-)
-COMMENT='Stores all user data'
 COLLATE='utf8_general_ci'
 ENGINE=InnoDB
 ;
