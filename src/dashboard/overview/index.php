@@ -55,7 +55,7 @@
 					</div>
 					<div class="col-6 col-sm-3 placeholder">
 						<h4 class="neutral-text"><i class="fa fa-5x fa-server"></i></h4>
-						<h4>3</h4>
+						<h4>3 of 5</h4>
 						<span class="text-muted">
 							Active Devices
 						</span>
