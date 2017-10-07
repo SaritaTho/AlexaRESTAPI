@@ -19,10 +19,10 @@
 		
 		// return a pretty string representing the current timestamp, or the provded one
 		public static function getPrettyTime($timestamp = null) {
-			if (is_null($timestamp)) {
-				$timestamp = time();
-			}
-			
-			return date("g:i A T n/j/Y", $timestamp);	// 8:35 AM UTC 9/16/2017
+			return date("g:i A T n/j/Y", $timestamp ?? time());	// 8:35 AM UTC 12/30/2017
+		}
+		
+		public static function getLogTime($timestamp = null) {
+			return date("d-M-Y H:i:s e", $timestamp ?? time());	// 30-12-2017 23:35:06 UTC
 		}
 	}
