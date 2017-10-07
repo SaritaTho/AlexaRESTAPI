@@ -26,4 +26,3 @@
 			return date("g:i A T n/j/Y", $timestamp);	// 8:35 AM UTC 9/16/2017
 		}
 	}
-?>

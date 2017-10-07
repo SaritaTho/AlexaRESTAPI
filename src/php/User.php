@@ -25,4 +25,3 @@
 		
 		// setters can be added but currently too lazy to add them
 	}
-?>
