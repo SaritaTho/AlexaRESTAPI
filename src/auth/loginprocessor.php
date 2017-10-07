@@ -1,4 +1,6 @@
 <?php
+	ob_start();
+	
 	// not using POST - this can happen when using silent operation
 	if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 		header('Location: /auth/');

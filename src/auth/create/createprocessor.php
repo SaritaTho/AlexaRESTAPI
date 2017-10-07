@@ -1,4 +1,6 @@
 <?php
+	ob_start();
+	
 	// system for creating user logins
 	
 	include_once "../../config.php";

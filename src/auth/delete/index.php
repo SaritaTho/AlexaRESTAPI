@@ -1,4 +1,6 @@
 <?php
+	ob_start();
+	
 	session_start();
 	
 	include_once "../../config.php";
@@ -12,9 +14,7 @@
 		header("Location: /auth/?redirect=/auth/delete");
 		exit();
 	}
-?>
-
-<!DOCTYPE html>
+?><!DOCTYPE html>
 <html lang="en">
 <head>
 	<title>Delete Account - Alexa REST API</title>
