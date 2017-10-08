@@ -2,6 +2,7 @@
 	Deny from all
 </files>
 
-# replace with php.ini if possible
-php_value error_reporting 30709
-php_value error_log error_log
+php_flag display_errors on
+php_flag display_startup_errors on
+php_flag log_errors on
+php_value error_reporting -1
