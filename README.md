@@ -17,6 +17,7 @@ Assuming you have everything, let's get started!
 3. Run [this script](database-setup.sql) in your MySQL database to get it all ready to go.
 4. [Create a reCAPTCHA site](https://www.google.com/recaptcha/admin) and take note of your site key and secret.
 5. [Configure everything](https://github.com/Technoguyfication/alexa-rest-api/wiki/Configuration) using the wiki page.
+6. Adjust the `.htaccess` file in the document root to your liking.
 
 #### Congrats! You're done.
 
