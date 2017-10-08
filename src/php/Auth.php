@@ -19,8 +19,6 @@
 			if (is_null($userid)) throw new Exception("Userid cannot be null");
 			if (is_null($lifespan)) throw new Exception("Lifespan cannot be null");
 			
-			$stmt = $this->database->dbh->prepare("INSERT INTO `logintokens` (`userid`, `token`, `expiry`, `hash`, `timegenerated`, `ip`, `location`, `browser`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-			
 			// generate 60 character long string for the token
 			$newtoken = bin2hex(openssl_random_pseudo_bytes(30));
 			$timegenerated = time();
@@ -39,12 +37,9 @@
 			$browser_raw = new BrowserDetection();
 			// ex. "Firefox on Windows (Desktop)" or "Safari on iPhone (Mobile)"
 			$browser = $browser_raw->getName() . " on " . $browser_raw->getPlatform() . " (" . ($browser_raw->isMobile()?"Mobile":"Desktop") . ")";
-						
-			$result = $stmt->execute([$userid, $newtoken, $expiry, $tokenhash, $timegenerated, $ip, $geolocation, $browser]);
 			
-			if ($result == false) {
-				throw new Exception("Query failed");
-			}
+			// send the query to the database
+			$this->database->pquery("INSERT INTO `logintokens` (`userid`, `token`, `expiry`, `hash`, `timegenerated`, `ip`, `location`, `browser`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", [$userid, $newtoken, $expiry, $tokenhash, $timegenerated, $ip, $geolocation, $browser]);
 			
 			return $newtoken;
 		}
@@ -54,26 +49,22 @@
 			if (is_null($email)) throw new Exception("Email cannot be null");
 			if (is_null($password)) throw new Exception("Password cannot be null");
 			
+			// generate password hash
+			$password_hash = $this->generatePasswordHash($password);
+			
 			// create user account
-			$stmt = $this->database->dbh->prepare("INSERT INTO `users` (`email`, `password`, `registered`) VALUES (?, ?, ?)");
-			$result = $stmt->execute([$email, $this->generatePasswordHash($password), time()]);
+			$this->database->pquery("INSERT INTO `users` (`email`, `password`, `registered`) VALUES (?, ?, ?);", [$email, $password_hash, time()]);
 			
-			if ($result == false) {
-				throw new Exception("Failed to run creation query");
+			// add item to account history for account create
+			try {
+				// get user id back
+				$results = $this->database->pquery("SELECT `userid` FROM `users` WHERE `email` = ?;", [$email])->fetchAll();
+				$userid = $results[0]["userid"];
+				
+				$this->addAccountHistoryItem($userid, 0);
+			} catch (\Exception $e) {	// this isn't crucial so we can handle the exception without notifying the user
+				error_log("Error creating account history item for user $userid: $e");
 			}
-			
-			// log it
-			// get user id back
-			$stmt = $this->database->dbh->prepare("SELECT `userid` FROM `users` WHERE `email` = ?");
-			$result = $stmt->execute([$email]);
-			
-			if ($result == false) {
-				return;
-			}
-			
-			$userid = $stmt->fetchAll()[0]["userid"];
-			
-			$this->addAccountHistoryItem($userid, 0);
 		}
 		
 		// generate a hash for a password
@@ -138,16 +129,10 @@
 		public function checkUserToken($token) {
 			if (is_null($token)) throw new Exception("Token cannot be null");
 			
-			$stmt = $this->database->dbh->prepare("SELECT `token` from `logintokens` WHERE `token` = ? AND `expiry` > ? LIMIT 1");
-			$result = $stmt->execute([$token, time()]);
-			
-			// empty response - error
-			if ($result == false) {
-				return false;
-			}
+			$results = $this->database->pquery("SELECT `token` from `logintokens` WHERE `token` = ? AND `expiry` > ? LIMIT 1", [$token, time()])->fetchAll();
 			
 			// any tokens active?
-			if (count($stmt->fetchAll()) == 0) {
+			if (count($results) == 0) {
 				return false;
 			} else {
 				return true;
@@ -159,26 +144,19 @@
 			if (is_null($email)) throw new Exception("Email cannot be null");
 			if (is_null($password)) throw new Exception("Password cannot be null");
 			
-			$stmt = $this->database->dbh->prepare("SELECT `password` FROM `users` WHERE `email` = ? LIMIT 1");
-			$result = $stmt->execute([$email]);
+			// query gather password hashes from matching users
+			$results = $this->database->pquery("SELECT `password` FROM `users` WHERE `email` = ? LIMIT 1", [$email])->fetchAll();
 			
-			// empty response - error
-			if ($result == false) {
-				throw new Exception("Failed to query database");
-			}
-			
-			$users = $stmt->fetchAll();
-			
-			// no accounts on record
-			if (count($users) == 0) {
+			// no matching accounts on record
+			if (count($results) == 0) {
 				return false;
 			}
 			
-			// verify pass
-			if (password_verify($password, $users[0]["password"])) {
-				return true;
+			// verify hashed password for user
+			if (password_verify($password, $results[0]["password"])) {
+				return true;	// password verified, user is good
 			} else {
-				return false;
+				return false;	// password incorrect
 			}
 		}
 		
@@ -247,10 +225,10 @@
 			if (is_null($token)) throw new Exception("Token cannot be null");
 			
 			// void token
-			$stmt = $this->database->dbh->prepare("DELETE FROM `logintokens` WHERE `token` = ?");
-			$stmt->execute([$token]);
+			$this->database->pquery("DELETE FROM `logintokens` WHERE `token` = ?", [$token]);
 		}
 		
+		// destroy's the user's session completely
 		public function destroySession() {
 			unset($_SESSION["token"]);
 			session_unset();
@@ -262,26 +240,16 @@
 		
 		// logs out all sessions, second param decides whether or not to logout current session
 		public function logoutAll($userid) {
-			$stmt = $this->database->dbh->prepare("DELETE FROM `logintokens` WHERE `userid` = ?");
-			$result = $stmt->execute([$userid]);
-			
-			if ($result == false) {
-				throw new Exception("Database query failed");
-			}
+			// delete all of a user's tokens
+			$this->database->pquery("DELETE FROM `logintokens` WHERE `userid` = ?", [$userid]);
 		}
 		
 		// gets an account id based on an email
 		public function getUserId($email) {
 			if (is_null($email)) throw new Exception("Email cannot be null");
 			
-			$stmt = $this->database->dbh->prepare("SELECT `userid` FROM `users` WHERE `email` = ? LIMIT 1");
-			$result = $stmt->execute([$email]);
-			
-			if ($result == false) {
-				throw new Exception("Database error");
-			}
-			
-			$results = $stmt->fetchAll();
+			// grab user id from database based on email
+			$results = $this->database->pquery("SELECT `userid` FROM `users` WHERE `email` = ? LIMIT 1", [$email])->fetchAll();
 			
 			// no accounts returned, likely doesn't exist
 			if (count($results) == 0) {
@@ -295,14 +263,8 @@
 		public function getUserEmail($userid) {
 			if (is_null($userid)) throw new Exception("Userid cannot be null");
 			
-			$stmt = $this->database->dbh->prepare("SELECT `email` FROM `users` WHERE `userid` = ? LIMIT 1");
-			$result = $stmt->execute([$userid]);
-			
-			if ($result == false) {
-				throw new Exception("Database query failed");
-			}
-			
-			$results = $stmt->fetchAll();
+			// grab email from database
+			$results = $this->database->pquery("SELECT `email` FROM `users` WHERE `userid` = ? LIMIT 1", [$userid])->fetchAll();
 			
 			if (count($results) == 0) {
 				throw new Exception("Account not found");
@@ -314,21 +276,14 @@
 		// gets user info from a token
 		public function getUserFromToken($token) {
 			// get userid
-			$stmt = $this->database->dbh->prepare("SELECT `userid` FROM `logintokens` WHERE `token` = ? LIMIT 1");
-			$result = $stmt->execute([$token]);
+			$results = $this->database->pquery("SELECT `userid` FROM `logintokens` WHERE `token` = ? LIMIT 1", [$token])->fetchAll();
 			
-			if ($result == false) {
-				throw new Exception("Database query failed");
-			}
-			
-			$results = $stmt->fetchAll();
-			
+			// no users returned
 			if (count($results) == 0) {
 				throw new Exception("User not found");
 			}
 			
 			$userid = $results[0]["userid"];
-			
 			$email = $this->getUserEmail($userid);
 			
 			return new User($userid, $email, $token);
@@ -336,15 +291,10 @@
 		
 		// gets a user object based on userid - token will not be populated
 		public function getUserFromUserId($userid) {
-			$stmt = $this->database->dbh->prepare("SELECT `email` FROM `users` WHERE `userid` = ? LIMIT 1");
-			$result = $stmt->execute([$userid]);
+			// query database for user email
+			$results = $this->database->pquery("SELECT `email` FROM `users` WHERE `userid` = ? LIMIT 1", [$userid])->fetchAll();
 			
-			if ($result == false) {
-				throw new Exception("Failed to query database");
-			}
-			
-			$results = $stmt->fetchAll();
-			
+			// no users returned
 			if (count($results) == 0) {
 				throw new Exception("User not found");
 			}
@@ -359,26 +309,25 @@
 			if (is_null($userid)) throw new Exception("Userid cannot be null");
 			if (is_null($newpassword)) throw new Exception("New password cannot be null");
 			
-			$stmt = $this->database->dbh->prepare("UPDATE `users` SET `password` = ? WHERE `userid` = ? LIMIT 1");
-			$result = $stmt->execute([generatePasswordHash($newpassword), $userid]);
+			$password_hash = generatePasswordHash($newpassword);
 			
-			if ($result == false) {
-				throw new Exception("Database error");
-			}
+			// update password in database
+			$this->database->pquery("UPDATE `users` SET `password` = ? WHERE `userid` = ? LIMIT 1", [$password_hash, $userid]);
 			
+			// account history for password change
 			$this->addAccountHistoryItem($userid, 2);
 		}
 		
+		// change a user's email
 		public function changeAccountEmail($userid, $newemail) {
 			if (is_null($userid)) throw new Exception("Userid cannot be null");
 			if (is_null($newemail)) throw new Exception("New email cannot be null");
 			
-			$stmt = $this->database->dbh->prepare("UPDATE `users` SET `email` = ? WHERE `userid` = ? LIMIT 1");
-			$result = $stmt->execute([$newemail, $userid]);
+			// update email in db
+			$this->database->pquery("UPDATE `users` SET `email` = ? WHERE `userid` = ? LIMIT 1", [$newemail, $userid]);
 			
-			if ($result == false) {
-				throw new Exception("Database query failed");
-			}
+			// add account history item for email
+			$this->addAccountHistoryItem($userid, 1);
 		}
 		
 		// add an item to the account security history
@@ -394,29 +343,25 @@
 			if (is_null($userid)) throw new Exception("Userid cannot be null");
 			if (is_null($action)) throw new Exception("Action cannot be null");
 			
+			// default for ip
 			if ($ip == null) {
 				$ip = $_SERVER["REMOTE_ADDR"];
 			}
 			
+			// default for time
 			if ($time == null) {
 				$time = time();
 			}
 			
-			$stmt = $this->database->dbh->prepare("INSERT INTO `accounthistory` (`userid`, `action`, `time`, `ip`, `location`) VALUES (?, ?, ?, ?, ?)");
-			
-			$geolocation = null;
-			
 			// lookup geolocation from ip
+			$geolocation = null;
 			if (isset($ip)) {
 				try {
 					$geolocation = Utility::getGeolocation($ip);
 				} catch(Exception $e) {}	// geolocation isn't super important kaaaay
 			}
 			
-			$response = $stmt->execute([$userid, $action, $time, $ip, $geolocation]);
-			
-			if ($response == false) {
-				throw new Exception("Failed to insert database entry.");
-			}
+			// add item to database
+			$this->database->pquery("INSERT INTO `accounthistory` (`userid`, `action`, `time`, `ip`, `location`) VALUES (?, ?, ?, ?, ?)", [$userid, $action, $time, $ip, $geolocation]);
 		}
 	}
