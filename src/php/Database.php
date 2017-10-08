@@ -10,4 +10,17 @@
 			$dbconfig['password']);
 			$this->dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 		}
+		
+		// pquery stands for Prepared Query, which prepares and executes a query
+		// returns: statement object
+		public function pquery($query, $values = null) {
+			$stmt = $this->dbh->prepare($query);
+			$response = $stmt->execute($values);
+			
+			if ($response == null) {
+				throw new Exception("Failed to execute query: response null");
+			}
+			
+			return $stmt;
+		}
 	}	
