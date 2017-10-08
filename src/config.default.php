@@ -1,5 +1,6 @@
 <?php
 	$webconfig = [
+		"development" => false,
 		"host" => [
 			"domain" => "alexa.yourdomain.com",
 			"ssl-only" => true,
@@ -15,6 +16,7 @@
 			"dbname" => "alexa"
 		],
 		"recaptcha" => [
+			"enabled" => true,
 			"site" => "google-recaptcha-sitekey",
 			"secret" => "google-recaptcha-secret"
 		],
