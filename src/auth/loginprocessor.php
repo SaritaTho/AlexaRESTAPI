@@ -43,8 +43,9 @@
 		}
 		
 	} catch (Exception $e) {
-		complete(false, "Internal error: " . $e->getMessage() . " " . $e->getFile() . ":" . $e->getLine());
-		//complete(false, "Uh-oh! Something went wrong. Try again?");
+		error_log($e);
+		//complete(false, "Internal error: " . $e);
+		complete(false, "Uh-oh! Something went wrong. Try again?");
 	}
 	
 	// send a response and finish up
