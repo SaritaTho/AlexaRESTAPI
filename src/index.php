@@ -3,14 +3,18 @@
 	
 	session_start();
 	
-	include_once "config.php";
-	include_once "php/Database.php";
-	include_once "php/Auth.php";
-	
-	try {
+	try
+	{
+		include_once "config.php";
+		include_once "php/Database.php";
+		include_once "php/Auth.php";
+		
 		$database = new Database($webconfig["database"]);
 		$auth = new Auth($database);
-	} catch (Exception $e) {
+	}
+	catch(\Exception $e)
+	{
+		// don't fail on these because it's our homepage
 		error_log($e);
 	}
 ?><!DOCTYPE html>
@@ -40,8 +44,16 @@
 					<a class="nav-link" href="/dashboard">Dashboard</a>
 				</li>
 			</ul>
-			<?php include "php/templates/navarea.php"; ?>
-		</div>
+			<?php
+				try
+				{
+					include "php/templates/navarea.php";
+				}
+				catch (Exception $e)
+				{
+					error_log($e);
+				}
+			?></div>
 	</nav><!-- Main jumbotron for a primary marketing message or call to action -->
 	<div class="jumbotron">
 		<div class="container">
