@@ -40,20 +40,17 @@
 				<label><input type="checkbox" value="remember-me"> Remember me</label>
 			</div>-->
 			
-			<br>
-			
 			<?php
 				// only display recaptcha if it's enabled and development mode is disabled
-				if (!$webconfig["development"] && $webconfig["recaptcha"]["enabled"]) {
+				if ($webconfig["recaptcha"]["enabled"]) {
 					echo "<div class=\"g-recaptcha\" data-sitekey=\"" . $webconfig["recaptcha"]["site"] . "\"></div>";
 				}
 			?>
 			
-			<br>
-			
 			<p class="error"><strong><span class="hidden" id="errortext">Error signing up</span></strong></p>
 			<button class="btn btn-lg btn-primary btn-block" type="submit">Create account</button>
-			 <br>
+			
+			<br>
 			 
 			<p class="text-center">By signing up, you agree to our <a href="/terms" target="_blank">terms of service.</a></p>
 		</form>

@@ -63,7 +63,7 @@
 			<!--<div class="checkbox">
 				<label><input type="checkbox" value="remember-me"> Remember me</label>
 			</div>-->
-			<p class="error"><strong><span class="hidden" id="errortext">Error logging in</span></strong></p>
+			<p class="error notice"><strong><span class="hidden" id="errortext">Error logging in</span></strong></p>
 			<button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button><br />
 			<p class="text-center">Or, <a href="create/">create an account.</a></p>
 		</form>

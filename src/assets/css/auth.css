@@ -30,6 +30,7 @@ body {
 
 .error {
 	color: crimson;
+	padding-top: 10px;
 }
 
 .hidden {
