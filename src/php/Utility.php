@@ -9,6 +9,9 @@
 			
 			if ($geolocation_raw != false) {
 				$geolocation_array = json_decode($geolocation_raw);
+				if (empty($geolocation_array->country_name) || empty($geolocation_array->region_name) || empty($geolocation_array->city))
+					return null;
+				
 				// city, region, country
 				// san francisco, california, united states
 				return $geolocation_array->city . ", ". $geolocation_array->region_name . ", ". $geolocation_array->country_name;
