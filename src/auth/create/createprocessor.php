@@ -110,7 +110,7 @@
 	
 	// create the account
 	try {
-		$auth->generateUserLogin($email, $password);
+		$auth->createUserLogin($email, $password);
 	} catch (\Exception $e) {
 		error_log("Error creating user login: $e");
 		complete("An internal error occured. Please refresh and try again.");
