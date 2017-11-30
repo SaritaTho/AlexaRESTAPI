@@ -21,7 +21,7 @@ class User {
      *
      * @var integer The user's internal ID
      */
-    public $userid;
+    public $userId;
 
     public function __construct() {
 	
@@ -35,8 +35,8 @@ class User {
 	return $this->token;
     }
 
-    public function getUserid() {
-	return $this->userid;
+    public function getUserId() {
+	return $this->userId;
     }
 
     public function setEmail($email) {
@@ -49,8 +49,8 @@ class User {
 	return $this;
     }
 
-    public function setUserid($userid) {
-	$this->userid = $userid;
+    public function setUserId($userId) {
+	$this->userId = $userId;
 	return $this;
     }
 

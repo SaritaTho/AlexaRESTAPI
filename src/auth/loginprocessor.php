@@ -33,19 +33,21 @@
 	
 	try {
 		if ($auth->checkUserCredentials($email, $password)) {	// login success
-			$userid = $auth->getUserId($email);
-			$auth->login($userid);
+			$user = $auth->getUserFromEmail($email);
+			$auth->login($user->getUserId());
 			
 			complete(true);
-			
 		} else {
 			complete(false, "Invalid username or password");
 		}
 		
-	} catch (Exception $e) {
+	} catch (\Exception $e) {
 		error_log($e);
-		//complete(false, "Internal error: " . $e);
-		complete(false, "Uh-oh! Something went wrong. Try again?");
+		if ($webconfig["development"]) {
+			complete(false, "Internal error: " . $e);
+		} else {
+			complete(false, "Uh-oh! Something went wrong. Try again?");
+		}
 	}
 	
 	// send a response and finish up
