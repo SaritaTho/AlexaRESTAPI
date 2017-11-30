@@ -4,3 +4,6 @@
 	<input type="hidden" name="silent" value="true" />
 	<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Login</button>
 </form>
+<form class="form-inline my-2 my-lg-0" method="get" style="margin-left: 7pt;" action="/auth/create/">
+	<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Create Account</button>
+</form>
