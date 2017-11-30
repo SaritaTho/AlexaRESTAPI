@@ -5,6 +5,9 @@ include_once __DIR__ . "/Utility.php";
 include_once __DIR__ . "/User.php";
 include_once __DIR__ . "/thirdparty/BrowserDetection.php";
 
+/**
+ * Handles all authentication to the website
+ */
 class Auth {
 
     /**
