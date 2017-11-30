@@ -45,7 +45,7 @@
 			<?php
 				// only display recaptcha if it's enabled and development mode is disabled
 				if ($webconfig["recaptcha"]["enabled"]) {
-					echo "<div class=\"g-recaptcha\" data-sitekey=\"" . $webconfig["recaptcha"]["site"] . "\"></div>";
+					echo "<br /><div class=\"g-recaptcha\" data-sitekey=\"" . $webconfig["recaptcha"]["site"] . "\"></div>";
 				}
 			?>
 			
