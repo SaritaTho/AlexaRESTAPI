@@ -13,7 +13,9 @@
 	
 	<link href="/assets/css/auth.css" rel="stylesheet">
 	<link href="/assets/css/sticky-footer.css" rel="stylesheet">
-	<script src='https://www.google.com/recaptcha/api.js'></script>
+	<?php if ($webconfig["recaptcha"]["enabled"]) {
+		echo "<script src='https://www.google.com/recaptcha/api.js'></script>";
+	} ?>
 </head>
 <body>
 	<div class="container">
@@ -58,8 +60,8 @@
 	
 	<?php 
 		include '../footer.php';
-		include '../../php/templates/basicscripts.php'; ?>
-	</script>
+		include '../../php/templates/basicscripts.php';
+	?>
 	<script src="/assets/js/ie10-viewport-bug-workaround.js"></script>
 	<script src="/assets/js/jquery-form.min.js"></script>
 	<script src="create.js"></script>
