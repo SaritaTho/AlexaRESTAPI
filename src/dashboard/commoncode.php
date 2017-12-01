@@ -19,4 +19,16 @@
 	function createItemCell($content, $before = null, $after = null) {
 		return sprintf("<td>$before%s$after</td>", $content);
 	}
+	
+	function createIpCell($ip) {
+		global $webconfig;
+		
+		if (isset($ip)) {	// check if ip address exists
+			return createItemCell(
+				$ip, "<a href=\"" . sprintf($webconfig["geoip"]["browser-uri"],	// text
+				$ip) . "\" target=\"_blank\">", "</a>");							// link
+		} else {	// ip doesn't exist
+			return createItemCell("(Unknown)");
+		}
+	}
 ?>

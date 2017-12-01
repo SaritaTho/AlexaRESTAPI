@@ -510,5 +510,18 @@ class HistoryItems {
      * Password change
      */
     const PASSWORD_CHANGE = 2;
+	
+	public static function getFriendlyName($item) {
+		switch ($item) {
+			case self::ACCOUNT_CREATE:
+				return "Account Creation";
+			case self::EMAIL_CHANGE:
+				return "Email Change";
+			case self::PASSWORD_CHANGE:
+				return "Password Change";
+			default:
+				return "Unknown";
+		}
+	}
 
 }
