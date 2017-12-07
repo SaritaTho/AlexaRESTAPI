@@ -132,7 +132,15 @@ class Auth {
      * @return boolean Whether the user is logged in
      */
     public function checkUserIsLoggedIn() {
-		return ($this->checkUserToken($this->getEnvironmentToken()));
+		if ($this->checkUserToken($this->getEnvironmentToken())) {
+			if (!$this->checkUserEnvironment()) {
+				$this->setupUserEnvironment($this->getUserFromToken($this->getEnvironmentToken()));
+			}
+			
+			return true;
+		} else {
+			return false;
+		}
     }
 
     /**
@@ -358,6 +366,19 @@ class Auth {
 		
 		return $user;
     }
+	
+	/**
+	 * Gets the email for a user ID.
+	 * 
+	 * @param int $userid User ID
+	 * @return string Email associated with user ID
+	 * @throws Exception
+	 */
+	private function getUserEmail($userid) {
+		$query = $this->database->pquery("SELECT `email` FROM `users` WHERE `userid` = ? LIMIT 1", [$userid]);
+		
+		return $query->fetchAll()[0]["email"];
+	}
 
     /**
      * Gets a User from a User ID, throws exception if User does not exist.
