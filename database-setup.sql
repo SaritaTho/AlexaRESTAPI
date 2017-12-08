@@ -45,3 +45,31 @@ COMMENT='Stores login tokens to keep user sessions.'
 COLLATE='utf8_general_ci'
 ENGINE=InnoDB
 ;
+
+CREATE TABLE `oauth_apps` (
+	`appid` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'Internal ID of service',
+	`name` VARCHAR(25) NOT NULL COMMENT 'Friendly app name',
+	`publisher` VARCHAR(25) NULL DEFAULT NULL COMMENT 'App publisher',
+	`icon` LONGBLOB NULL COMMENT 'App icon, stored in base64',
+	`redirect_uri` TEXT NOT NULL COMMENT 'Redirect URI of the app',
+	PRIMARY KEY (`appid`)
+)
+COMMENT='Stores information about OAuth "Apps" or "Services"'
+COLLATE='utf8_general_ci'
+ENGINE=InnoDB
+;
+
+CREATE TABLE `oauth_tokens` (
+	`appid` INT(10) UNSIGNED NOT NULL COMMENT 'ID of the app',
+	`token` VARCHAR(256) NOT NULL COMMENT 'Access token string',
+	`userid` BIGINT(20) UNSIGNED NOT NULL COMMENT 'Userid of the user the token is for',
+	PRIMARY KEY (`appid`),
+	UNIQUE INDEX `UNIQUE_APP_USER` (`appid`, `userid`),
+	INDEX `FK_OAUTH_TOKENS_USERID` (`userid`),
+	CONSTRAINT `FK_OAUTH_TOKENS_APPID` FOREIGN KEY (`appid`) REFERENCES `oauth_apps` (`appid`) ON UPDATE CASCADE ON DELETE CASCADE,
+	CONSTRAINT `FK_OAUTH_TOKENS_USERID` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON UPDATE CASCADE ON DELETE CASCADE
+)
+COMMENT='Stores OAuth access tokens'
+COLLATE='utf8_general_ci'
+ENGINE=InnoDB
+;
