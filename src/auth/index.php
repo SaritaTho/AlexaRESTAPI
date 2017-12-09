@@ -35,9 +35,13 @@
 		}
 	}
 	
-?>
-
-<!DOCTYPE html>
+	$err = null;
+	
+	if (array_key_exists("err", $_GET)) {
+		$err = $_GET["err"];
+	}
+	
+?><!DOCTYPE html>
 <html lang="en">
 <head>
 	<title>Sign in to Alexa API</title>
@@ -63,7 +67,7 @@
 			<!--<div class="checkbox">
 				<label><input type="checkbox" value="remember-me"> Remember me</label>
 			</div>-->
-			<p class="error notice"><strong><span class="hidden" id="errortext">Error logging in</span></strong></p>
+			<p class="error notice"><strong><span class="<?php if (is_null($err)) { echo "hidden"; } ?>" id="errortext"><?php echo $err ?? "Error logging in."; ?></span></strong></p>
 			<button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button><br />
 			<p class="text-center">Or, <a href="create/">create an account.</a></p>
 		</form>
@@ -72,7 +76,7 @@
 	<?php include "footer.php"; ?>
 	
 	<?php include '../php/templates/basicscripts.php'; ?>
-	<script>redirectUri = <?php if (array_key_exists("redirect", $_GET)) {
+	<script>redirectUri = <?php if (array_key_exists("redirect", $_GET) && !empty($_GET["redirect"])) {
 		echo "\"" . $_GET["redirect"] . "\"";
 	} else {
 		echo "null";

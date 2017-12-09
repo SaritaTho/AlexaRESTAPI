@@ -9,7 +9,7 @@ $(document).ready(function() {
 				else
 					window.location.replace("/");
 			} else {
-				console.log(`Failed to login: ${JSON.stringify(response, null, 4)}`);
+				console.log(`Failed to login: ${JSON.stringify(response, null, 4)}.`);
 				
 				// shows the error text and sets the content to the server error
 				var message = $("#errortext");

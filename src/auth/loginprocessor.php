@@ -53,11 +53,11 @@
 	// send a response and finish up
 	function complete($success, $message = null) {
 		// on silent operation, redirect instantly
-		if (array_key_exists("silent", $_POST) && $_POST["silent"] == true) {
-			if ($success == true) {
+		if (array_key_exists("silent", $_POST) && $_POST["silent"]) {
+			if ($success) {
 				header('Location: /');
 			} else {
-				header('Location: /auth/');
+				header('Location: /auth/?err=' . urlencode($message));
 			}
 			exit();
 		} else {	// normal operation
