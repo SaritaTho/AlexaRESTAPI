@@ -10,5 +10,5 @@ cron_log
 # other files that shouldn't be added to vc
 
 phpinfo.php
-privacypolicy/*
-terms/*
+privacypolicy/
+terms/
