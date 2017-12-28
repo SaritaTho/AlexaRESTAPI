@@ -82,7 +82,7 @@ CREATE TABLE `oauth_clients` (
 COMMENT='Stores information about OAuth clients\r\n'
 COLLATE='utf8_general_ci'
 ENGINE=InnoDB
-AUTO_INCREMENT=2
+AUTO_INCREMENT=0
 ;
 
 CREATE TABLE `oauth_refreshtokens` (
@@ -114,5 +114,5 @@ CREATE TABLE `users` (
 COMMENT='Stores all user data'
 COLLATE='utf8_general_ci'
 ENGINE=InnoDB
-AUTO_INCREMENT=36
+AUTO_INCREMENT=0
 ;
