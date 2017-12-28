@@ -241,15 +241,17 @@ class Auth {
     * @return boolean
     */
     public function checkUserEnvironment() {
-	if (!isset($_SESSION)) {
-	    return false;
-	}
+		if (!isset($_SESSION)) {
+			return false;
+		}
 
-	$sess = $_SESSION;
+		$sess = $_SESSION;
 
-	if (!array_key_exists("token", $sess) || !array_key_exists("email", $sess) || !array_key_exists("userid", $sess)) {
-	    return false;
-	}
+		if (!array_key_exists("token", $sess) || !array_key_exists("email", $sess) || !array_key_exists("userid", $sess)) {
+			return false;
+		}
+		
+		return true;
     }
 
     /**
