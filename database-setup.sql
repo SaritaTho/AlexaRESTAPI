@@ -9,7 +9,7 @@ CREATE TABLE `users` (
 COMMENT='Stores all user data'
 COLLATE='utf8_general_ci'
 ENGINE=InnoDB
-AUTO_INCREMENT=6
+AUTO_INCREMENT=0
 ;
 
 CREATE TABLE `accounthistory` (
