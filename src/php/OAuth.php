@@ -28,6 +28,68 @@
 			
 			$query = $this->database->pquery("INSERT INTO `oauth_tokens` (`appid`, `token`, `userid`) VALUES (?, ?, ?)", [$appid, $token, $userid]);
 		}
+		
+		/**
+		 * Gets a client from their client ID
+		 * 
+		 * @param $client_id string ID of the client
+		 * @returns OAuthClient The client, or null if the client does not exist
+		 */
+		public function getClientFromId($client_id) {
+			$results = $this->database->pquery("SELECT ALL FROM `oauth_clients` WHERE `client_id` == ?", [$client_id])->fetchAll();
+			
+			// return null if no client is returned
+			if (count($results) == 0) {
+				return null;
+			}
+			
+			$client = new OAuthClient();
+			$client->friendly_name = $results[0]["name"];
+			$client->publisher_name = $results[0]["publisher"];
+			$client->icon = $results[0]["icon"];
+			$client->client_id = $client_id;
+			$client->id = $results[0]["id"];
+			$client->secret = $results[0]["client_secret"];
+		}
+	}
+	
+	/**
+	 * Represents an OAuth client
+	 */
+	class OAuthClient {
+		function __construct() {
+			
+		}
+		
+		/**
+		 * The friendly name to be shown to the user-agent
+		 */
+		public $friendly_name;
+		
+		/**
+		 * The client publisher
+		 */
+		public $publisher_name;
+		
+		/**
+		 * The client icon, in base64
+		 */
+		public $icon;
+		
+		/**
+		 * The client secret string
+		 */
+		public $secret;
+		
+		/**
+		 * The OAuth 2 client identifier string
+		 */
+		public $client_id;
+		
+		/**
+		 * The internal ID of the client
+		 */
+		public $id;
 	}
 	
 ?>
