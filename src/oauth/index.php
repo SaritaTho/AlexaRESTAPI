@@ -25,5 +25,24 @@
 		exit();
 	}
 	
+	// make a place for us to put relevant request data
+	$request;
+	var_dump($_SERVER["REQUEST_METHOD"]);
+	var_dump($_POST);
 	
+	var_dump($auth->checkUserEnvironment());
+	
+	// get or post?
+	if ($_SERVER["REQUEST_METHOD"] == "GET")
+	{
+		$request = $_GET;
+	} else if ($_SERVER["REQUEST_METHOD"] == "POST")
+	{
+		$request = $_POST;
+	} else {
+		// invalid method
+		http_response_code(400);
+		echo "Invalid request method: " . $_SERVER["REQUEST_METHOD"];
+		exit();
+	}
 ?>
