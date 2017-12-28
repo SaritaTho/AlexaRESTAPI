@@ -87,7 +87,7 @@ class Auth {
      *
      * @param string $email Email address for the account
      * @param string $password Password for the account
-     * @return void
+     * @return integer User ID
      */
     public function createUserLogin($email, $password) {
 		if (is_null($email)) {
@@ -113,6 +113,8 @@ class Auth {
 		} catch (\Exception $e) { // this isn't crucial so we can handle the exception without notifying the user
 			error_log("Error creating account history item for user $email: $e");
 		}
+		
+		return $userid;
     }
 
     /**
@@ -411,6 +413,11 @@ class Auth {
      * @return null For when no token was found
      */
     public function getEnvironmentToken() {
+		if (session_status() == PHP_SESSION_NONE)
+		{
+			session_start();
+		}
+		
 		if (array_key_exists("token", $_SESSION)) {
 			return $_SESSION["token"];
 		}

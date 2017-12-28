@@ -57,7 +57,12 @@
 			<p class="text-center">By signing up, you agree to our <a href="/terms" target="_blank">terms of service.</a></p>
 		</form>
 	</div>
-	
+	<script>redirectUri = <?php if (array_key_exists("redirect", $_GET) && !empty($_GET["redirect"])) {
+		echo "\"" . $_GET["redirect"] . "\"";
+	} else {
+		echo "null";
+	} ?>;
+	</script>
 	<?php 
 		include '../footer.php';
 		include '../../php/templates/basicscripts.php';

@@ -4,10 +4,12 @@ $(document).ready(function() {
 		success: function(response) {
 			if (response.success) {
 				// login success
-				window.location.replace("/dashboard");
+				let redirectTo = redirectUri || "/dashboard";
+				console.log(`Redrecting: ${redirectTo}`);
+				window.location = redirectTo;
 			} else {
 				// nope. login error.
-				var message = $("#errortext");
+				let message = $("#errortext");
 				message.removeClass("hidden");
 				message.text(response.message);
 			}

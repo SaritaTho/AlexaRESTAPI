@@ -108,12 +108,13 @@
 		}
 	}
 	
-	// create the account
+	// create the account and log it in
 	try {
-		$auth->createUserLogin($email, $password);
+		$userid = $auth->createUserLogin($email, $password);
+		$auth->login($userid);
 	} catch (\Exception $e) {
 		error_log("Error creating user login: $e");
-		complete("An internal error occured. Please refresh and try again.");
+		complete(false, "An internal error occured. Please refresh and try again.");
 		exit();
 	} finally {
 		complete(true);
