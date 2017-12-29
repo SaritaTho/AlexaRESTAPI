@@ -119,6 +119,5 @@
 		</form>
 	</div>
 	<script src="/assets/js/ie10-viewport-bug-workaround.js"></script>
-	<script src="/assets/js/jquery-form.min.js"></script>
 </body>
 </html>
