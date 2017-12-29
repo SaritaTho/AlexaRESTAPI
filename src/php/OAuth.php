@@ -7,6 +7,15 @@
 		private $database;
 		
 		/**
+		 * The list of valid scopes for authentication
+		 */
+		public static $scopes = [
+			"control",
+			"account",
+			"manage"
+		];
+		
+		/**
 		 * Create a new OAuth instance
 		 * 
 		 * @param $dbh \Database The database connection to use

@@ -40,3 +40,24 @@ body {
 .notice {
 	margin-left: 5px;
 }
+
+.auth-email {
+	padding-top: 20px;
+	text-align: center;
+}
+
+.auth-bigger {
+	font-size: 20px;
+	font-weight: 500;
+}
+
+br.high {
+	line-height: 40px;
+}
+
+h4.auth-description {
+	line-height: 150%;
+}
+.auth-email {
+	font-size: 13pt;
+}
