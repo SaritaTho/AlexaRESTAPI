@@ -32,22 +32,18 @@
 	
 	// make a place for us to put request data
 	$request;
-	if ($_SERVER["REQUEST_METHOD"] === "GET") {
-		$request = $_GET;
-	} else if ($_SERVER["REQUEST_METHOD"] === "POST") {
-		$request = $_POST;
-	} else {
+	if (!in_array($_SERVER["REQUEST_METHOD"], ["GET", "POST"]) {
 		fail("Invalid request method: " . $_SERVER["REQUEST_METHOD"]);
 		exit();
 	}
+	$request = filter_var_array(array_merge($_POST, $_GET), FILTER_SANITIZE_STRING);
 	
 	// check response type
 	if (!array_key_exists("response_type", $request)) {
 		fail("No response_type specified");
 		exit();
 	}
-	$response_type = filter_var($request["response_type"], FILTER_SANITIZE_STRING);
-	if (!in_array($response_type, ["token", "code"])) {	// only allow token and code grants
+	if (!in_array($request["response_type"], ["token", "code"])) {	// only allow token and code grants
 		fail("Invalid or unknown response_type: " . $request["response_type"]);
 		exit();
 	}
@@ -57,7 +53,7 @@
 		fail("No scope was specified, but is required to be defined.");
 		exit();
 	}
-	$scopes = explode(',', filter_var($request["scope"], FILTER_SANITIZE_STRING));
+	$scopes = explode(',', $request["scope"]);
 	foreach($scopes as $scope) {
 		if (!in_array($scope, \OAuth::$scopes)) {
 			fail("Scope " . $scope . " is invalid.");
