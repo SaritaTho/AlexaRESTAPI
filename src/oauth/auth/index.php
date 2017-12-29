@@ -61,6 +61,23 @@
 		}
 	}
 	
+	// check client_id
+	if (!array_key_exists("client_id", $request)) {
+		fail("No client_id specified.");
+		exit();
+	}
+	$client = $oauth->getClientFromId($request["client_id"]);
+	if (is_null($client)) {
+		fail("Invalid client_id");
+		exit();
+	}
+	
+	// get state
+	$state = null;
+	if (array_key_exists("state", $request)) {
+		$state = $request["state"];
+	}
+	
 ?><!DOCTYPE html>
 <html lang="en">
 <head>
@@ -82,7 +99,7 @@
 			</div>
 			<br />
 			
-			<h4 class="auth-description">Give <a href="#">Amazon Alexa</a> access to your account?</h4>
+			<h4 class="auth-description">Give <a href="#"><?php echo $client->friendly_name; ?></a> access to your account?</h4>
 			
 			<span class="auth-bigger"><p style="margin-bottom: 5px;">This will allow them to do the following things:</p>
 			<ul>

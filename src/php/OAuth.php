@@ -45,10 +45,10 @@
 		 * @returns OAuthClient The client, or null if the client does not exist
 		 */
 		public function getClientFromId($client_id) {
-			$results = $this->database->pquery("SELECT ALL FROM `oauth_clients` WHERE `client_id` == ?", [$client_id])->fetchAll();
+			$results = $this->database->pquery("SELECT * FROM `oauth_clients` WHERE `client_id` = ?", [$client_id])->fetchAll();
 			
 			// return null if no client is returned
-			if (count($results) == 0) {
+			if (count($results) < 1) {
 				return null;
 			}
 			
@@ -59,6 +59,8 @@
 			$client->client_id = $client_id;
 			$client->id = $results[0]["id"];
 			$client->secret = $results[0]["client_secret"];
+			
+			return $client;
 		}
 	}
 	
