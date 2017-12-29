@@ -22,21 +22,21 @@
 		echo $reason;
 	}
 	
-	// user needs to be authenticated to do anything on this page
-	if (!$auth->checkUserIsLoggedIn())
-	{
-		// have user sign in and then bring them back to this page
-		header("Location: /auth/?redirect=" . urlencode("/oauth/auth/?" . $_SERVER["QUERY_STRING"]));
-		exit();
-	}
-	
 	// make a place for us to put request data
 	$request;
-	if (!in_array($_SERVER["REQUEST_METHOD"], ["GET", "POST"]) {
+	if (!in_array($_SERVER["REQUEST_METHOD"], ["GET", "POST"])) {
 		fail("Invalid request method: " . $_SERVER["REQUEST_METHOD"]);
 		exit();
 	}
 	$request = filter_var_array(array_merge($_POST, $_GET), FILTER_SANITIZE_STRING);
+	
+	// user needs to be authenticated to do anything on this page
+	if (!$auth->checkUserIsLoggedIn())
+	{
+		// have user sign in and then bring them back to this page
+		header("Location: /auth/?redirect=" . urlencode("/oauth/auth/?" . urldecode(http_build_query($request))));
+		exit();
+	}
 	
 	// check response type
 	if (!array_key_exists("response_type", $request)) {
