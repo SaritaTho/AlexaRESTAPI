@@ -10,9 +10,9 @@
 		 * The list of valid scopes for authentication
 		 */
 		public static $scopes = [
-			"control",
-			"account",
-			"manage"
+			"managedevices" => "Manage your devices",
+			"controldevices" => "Control your devices",
+			"account" => "See your account info"
 		];
 		
 		/**
@@ -59,6 +59,7 @@
 			$client->client_id = $client_id;
 			$client->id = $results[0]["id"];
 			$client->secret = $results[0]["client_secret"];
+			$client->url = $results[0]["url"];
 			
 			return $client;
 		}
@@ -101,6 +102,11 @@
 		 * The internal ID of the client
 		 */
 		public $id;
+		
+		/**
+		 * The webpage for the client
+		 */
+		public $url;
 	}
 	
 ?>

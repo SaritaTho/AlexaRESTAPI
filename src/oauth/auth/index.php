@@ -55,7 +55,7 @@
 	}
 	$scopes = explode(',', $request["scope"]);
 	foreach($scopes as $scope) {
-		if (!in_array($scope, \OAuth::$scopes)) {
+		if (!in_array($scope, array_keys(\OAuth::$scopes))) {
 			fail("Scope " . $scope . " is invalid.");
 			exit();
 		}
@@ -92,20 +92,20 @@
 <body>
 	<div class="container">
 		<form id="loginform" class="form-auth" method="post">
-			<h2 class="">Alexa REST API</h2><br />
-			
 			<div class="text-center">
-				<img class="rounded-circle text-center" style="max-width: 100px;" src="/assets/images/unknown-client.png">
+				<img class="rounded-circle text-center" style="max-width: 100px;" src="<?php echo $client->icon ?? "/assets/images/unknown-client.png"; ?>">
 			</div>
-			<br />
+			<p class="text-center auth-publisher"><?php echo $client->publisher_name; ?></p>
 			
-			<h4 class="auth-description">Give <a href="#"><?php echo $client->friendly_name; ?></a> access to your account?</h4>
+			<h4 class="auth-description">Give <a href="<?php echo $client->url; ?>" target="_blank"><?php echo $client->friendly_name; ?></a> access to your account?</h4>
 			
-			<span class="auth-bigger"><p style="margin-bottom: 5px;">This will allow them to do the following things:</p>
-			<ul>
-				<li>Control Your Devices</li>
-				<li>Manage your devices</li>
-				<li>View your profile info</li>
+			<span class="auth-bigger"><p style="margin-bottom: 5px;">This will grant them access to the following:</p>
+			<ul class="scope-list">
+				<?php
+					foreach ($scopes as $scope) {
+						echo "<li>" . \OAuth::$scopes[$scope] . "</li>";
+					}
+				?>
 			</ul></span>
 			
 			<br/>

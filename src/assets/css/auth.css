@@ -1,6 +1,6 @@
 body {
-  padding-top: 40px;
-  padding-bottom: 40px;
+  padding-top: 30px;
+  /*padding-bottom: 40px;*/
   background-color: #eee;
 }
 
@@ -58,6 +58,19 @@ br.high {
 h4.auth-description {
 	line-height: 150%;
 }
+
 .auth-email {
 	font-size: 13pt;
+}
+
+.auth-publisher {
+	font-size: 12pt;
+	color: #666666;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+ul.scope-list {
+	margin-top: 10px;
+	margin-bottom: 0px;
 }
