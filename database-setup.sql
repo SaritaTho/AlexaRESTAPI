@@ -35,6 +35,7 @@ ENGINE=InnoDB
 CREATE TABLE `oauth_accesstokens` (
 	`id` INT(10) UNSIGNED NOT NULL COMMENT 'ID of the client',
 	`expiry` BIGINT(20) UNSIGNED NOT NULL COMMENT 'Expiry of the access token, in seconds since epoch',
+	`scope` TEXT NOT NULL COMMENT 'The scope of the token',
 	`token` VARCHAR(256) NOT NULL COMMENT 'Access token string',
 	`userid` INT(10) UNSIGNED NOT NULL COMMENT 'Userid of the user the token is for',
 	`authcode` INT(11) UNSIGNED NULL DEFAULT NULL COMMENT 'The authorization code that generated the token',
@@ -52,16 +53,17 @@ ENGINE=InnoDB
 
 CREATE TABLE `oauth_authcodes` (
 	`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'The internal ID of the authorization code',
-	`clientid` INT(10) UNSIGNED NOT NULL COMMENT 'ID of the client',
+	`client` INT(10) UNSIGNED NOT NULL COMMENT 'Internal ID of the client',
 	`userid` INT(10) UNSIGNED NOT NULL COMMENT 'ID of the user',
+	`scope` INT(10) UNSIGNED NOT NULL COMMENT 'The scope of the authorization code',
 	`expiry` BIGINT(20) UNSIGNED NOT NULL COMMENT 'Expiry of the authorization grant. Should be a small amount of time.',
 	`redirect_uri` TEXT NULL COMMENT 'The redirect URI of the original authorization request.',
 	`code` TEXT NOT NULL COMMENT 'The authorization code given to the client' COLLATE 'utf8_bin',
-	`used` INT(11) NOT NULL DEFAULT '0' COMMENT 'Whether the authorization code has been used. 1 for true, and 0 for false.',
+	`used` INT(11) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'Whether the authorization code has been used. 1 for true, and 0 for false.',
 	PRIMARY KEY (`id`),
 	INDEX `FK_OAUTH_AUTHCODES_USERID` (`userid`),
-	INDEX `FK_OAUTH_AUTHCODES_CLIENTID` (`clientid`),
-	CONSTRAINT `FK_OAUTH_AUTHCODES_CLIENTID` FOREIGN KEY (`clientid`) REFERENCES `oauth_clients` (`id`) ON UPDATE CASCADE ON DELETE CASCADE,
+	INDEX `FK_OAUTH_AUTHCODES_CLIENT` (`client`),
+	CONSTRAINT `FK_OAUTH_AUTHCODES_CLIENTID` FOREIGN KEY (`client`) REFERENCES `oauth_clients` (`id`) ON UPDATE CASCADE ON DELETE CASCADE,
 	CONSTRAINT `FK_OAUTH_AUTHCODES_USERID` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON UPDATE CASCADE ON DELETE CASCADE
 )
 COMMENT='Stores OAuth authorization codes'
@@ -71,7 +73,7 @@ ENGINE=InnoDB
 
 CREATE TABLE `oauth_clients` (
 	`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'Internal ID of client',
-	`client_id` TEXT NOT NULL COMMENT 'A random, permanent client ID',
+	`client_id` TEXT NOT NULL COMMENT '(OAuth) A random, permanent client ID. Not to be confused with the id column.',
 	`client_secret` TEXT NOT NULL COMMENT 'A random, non-permanent client secret' COLLATE 'utf8_bin',
 	`redirect_uri` TEXT NOT NULL COMMENT 'Redirect URI of the client',
 	`name` VARCHAR(25) NOT NULL COMMENT 'Friendly client name',
@@ -87,11 +89,11 @@ AUTO_INCREMENT=0
 
 CREATE TABLE `oauth_refreshtokens` (
 	`id` INT(10) UNSIGNED NOT NULL COMMENT 'ID of the client',
-	`token` VARCHAR(256) NOT NULL COMMENT 'Refresh token string',
+	`token` VARCHAR(256) NOT NULL COMMENT 'Refresh token string' COLLATE 'utf8_bin',
 	`userid` INT(10) UNSIGNED NOT NULL COMMENT 'Userid of the user the token is for',
 	`authcode` INT(10) UNSIGNED NULL DEFAULT NULL COMMENT 'Authorization code that created the token',
+	`scope` INT(10) UNSIGNED NULL DEFAULT NULL COMMENT 'The scope of the refresh token. Access tokens of more restrictive scopes may be requested.',
 	PRIMARY KEY (`id`),
-	UNIQUE INDEX `UNIQUE_CLIENT_USER` (`id`, `userid`),
 	INDEX `FK_OAUTH_REFRESHTOKENS_USERID` (`userid`),
 	INDEX `FK_OAUTH_REFRESHTOKENS_AUTHCODE` (`authcode`),
 	CONSTRAINT `FK_OAUTH_REFRESHTOKENS_AUTHCODE` FOREIGN KEY (`authcode`) REFERENCES `oauth_authcodes` (`id`) ON UPDATE CASCADE ON DELETE CASCADE,
@@ -109,7 +111,7 @@ CREATE TABLE `users` (
 	`password` VARCHAR(255) NOT NULL COMMENT 'Password hash' COLLATE 'utf8_bin',
 	`registered` BIGINT(20) UNSIGNED NOT NULL COMMENT 'User registration date',
 	PRIMARY KEY (`userid`),
-	UNIQUE INDEX `email` (`email`)
+	UNIQUE INDEX `UNQUE_EMAIL` (`email`)
 )
 COMMENT='Stores all user data'
 COLLATE='utf8_general_ci'
