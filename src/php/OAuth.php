@@ -25,17 +25,18 @@
 		}
 		
 		/**
-		 * Creates a new access token for an app
+		 * Creates an access token for a user
 		 * 
-		 * @param $appid int App ID of the app the token is for
-		 * @param $userid int User ID the token is for
-		 * @returns string Token string
+		 * @param $client int The client ID to create the token for
+		 * @param $userid int The user ID to create the token for
+		 * @param $scope string The scope(s) of the access token. Should conform to RFC6749 Section 3.3
+		 * @param $expiry int How long the token should last, in seconds.  Null never expires
+		 * @param $authcode int The ID of the authorization code that generated the token, if there is one
 		 */
-		public function createOAuthToken($appid, $userid) {
-			// generate a 256 char random string for the token
-			$token = bin2hex(openssl_random_pseudo_bytes(128));
-			
-			$query = $this->database->pquery("INSERT INTO `oauth_tokens` (`appid`, `token`, `userid`) VALUES (?, ?, ?)", [$appid, $token, $userid]);
+		public function createAccessToken($client, $userid, $scope, $expiry = null, $authcode = null) {
+			$token = generateTokenString();
+			$database->pquery("INSERT INTO `oauth_accesstokens` (`client`, `expiry`, `scope`, `token`, `userid`, `authcode`) VALUES (?, ?, ?, ?, ?, ?)",
+				[$client, $expiry, $scope, $token, $userid, $authcode]);
 		}
 		
 		/**
@@ -61,7 +62,21 @@
 			$client->secret = $results[0]["client_secret"];
 			$client->url = $results[0]["url"];
 			
+			// get redirect uris
+			$redirect_uris_results = $this->database->pquery("SELECT `uri` FROM `oauth_redirecturis` WHERE `client` = ?", [$client->id])->fetchAll(PDO::FETCH_COLUMN);
+			$client->redirect_uris = array_values($redirect_uris_results);
+			
 			return $client;
+		}
+		
+		/**
+		 * Creates a new token string
+		 *
+		 * @param $length int The length of the token
+		 * @returns string The generated token string
+		 */
+		private function generateTokenString($length = 256) {
+			return bin2hex(random_bytes($length));
 		}
 	}
 	
@@ -107,6 +122,11 @@
 		 * The webpage for the client
 		 */
 		public $url;
+		
+		/**
+		 * An array containing valid redirect uris
+		 */
+		public $redirect_uris;
 	}
 	
 ?>
