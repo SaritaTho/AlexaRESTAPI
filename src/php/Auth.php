@@ -221,7 +221,7 @@ class Auth {
 		// generate new token using ID
 		$newtoken = $this->createUserToken($userid, $webconfig["authentication"]["login-lifetime"]);
 		$user = $this->getUserFromUserId($userid);
-		$user->setToken($newtoken);
+		$user->token = $newtoken;
 
 		if (session_status() == PHP_SESSION_NONE) {
 			session_start();
@@ -272,12 +272,12 @@ class Auth {
 			session_start();
 		}
 
-		$_SESSION["token"] = $user->getToken();
-		$_SESSION["email"] = $user->getEmail();
-		$_SESSION["userid"] = $user->getUserId();
+		$_SESSION["token"] = $user->token();
+		$_SESSION["email"] = $user->email();
+		$_SESSION["userid"] = $user->id();
 
 		// assign token to a cookie
-		setcookie("token", $user->getToken(), time() + $webconfig["authentication"]["login-lifetime"], "/", $webconfig["host"]["domain"], $webconfig["host"]["ssl-only"], false);
+		setcookie("token", $user->token(), time() + $webconfig["authentication"]["login-lifetime"], "/", $webconfig["host"]["domain"], $webconfig["host"]["ssl-only"], false);
     }
 
     /**
@@ -341,7 +341,8 @@ class Auth {
 		$userid = $results[0]["userid"];
 		
 		$user = new User();
-		$user->setUserId($userid)->setEmail($email);
+		$user->id = $userid;
+		$user->email = $email;
 		
 		return $user;
     }
@@ -366,7 +367,9 @@ class Auth {
 		$email = $this->getUserEmail($userid);
 
 		$user  = new User();
-		$user->setUserId($userid)->setEmail($email)->setToken($token);
+		$user->id = $userid;
+		$user->email = $email;
+		$user->token = $token;
 		
 		return $user;
     }
@@ -403,7 +406,10 @@ class Auth {
 		$email = $results[0]["email"];
 
 		$user = new User();
-		$user->setEmail($email)->setUserId($userid); // token is null
+		
+		// token is null
+		$user->email = $email;
+		$user->id = $userid;
 
 		return $user;
     }
@@ -430,6 +436,15 @@ class Auth {
 
 		return null;
     }
+	
+	/**
+	 * Gets the current logged in user
+	 * 
+	 * @returns \User The currently logged in user
+	 */
+	public function getCurrentUser() {
+		return $this->getUserFromToken($this->getEnvironmentToken());
+	}
 
     /**
      * Changes the password for a user

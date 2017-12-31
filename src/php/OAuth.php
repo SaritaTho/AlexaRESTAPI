@@ -32,11 +32,14 @@
 		 * @param $scope string The scope(s) of the access token. Should conform to RFC6749 Section 3.3
 		 * @param $expiry int How long the token should last, in seconds.  Null never expires
 		 * @param $authcode int The ID of the authorization code that generated the token, if there is one
+		 * @returns string The token string
 		 */
 		public function createAccessToken($client, $userid, $scope, $expiry = null, $authcode = null) {
-			$token = generateTokenString();
-			$database->pquery("INSERT INTO `oauth_accesstokens` (`client`, `expiry`, `scope`, `token`, `userid`, `authcode`) VALUES (?, ?, ?, ?, ?, ?)",
+			$token = $this->generateTokenString();
+			$this->database->pquery("INSERT INTO `oauth_accesstokens` (`client`, `expiry`, `scope`, `token`, `userid`, `authcode`) VALUES (?, ?, ?, ?, ?, ?)",
 				[$client, $expiry, $scope, $token, $userid, $authcode]);
+			
+			return $token;
 		}
 		
 		/**
