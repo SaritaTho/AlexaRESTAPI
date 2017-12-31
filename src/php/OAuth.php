@@ -78,7 +78,7 @@
 		 * @param $length int The length of the token
 		 * @returns string The generated token string
 		 */
-		private function generateTokenString($length = 256) {
+		private function generateTokenString($length = 64) {
 			return bin2hex(random_bytes($length));
 		}
 	}

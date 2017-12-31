@@ -34,7 +34,7 @@
 	try {
 		if ($auth->checkUserCredentials($email, $password)) {	// login success
 			$user = $auth->getUserFromEmail($email);
-			$auth->login($user->getUserId());
+			$auth->login($user->id);
 			
 			complete(true);
 		} else {

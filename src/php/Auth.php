@@ -272,12 +272,12 @@ class Auth {
 			session_start();
 		}
 
-		$_SESSION["token"] = $user->token();
-		$_SESSION["email"] = $user->email();
-		$_SESSION["userid"] = $user->id();
+		$_SESSION["token"] = $user->token;
+		$_SESSION["email"] = $user->email;
+		$_SESSION["userid"] = $user->id;
 
 		// assign token to a cookie
-		setcookie("token", $user->token(), time() + $webconfig["authentication"]["login-lifetime"], "/", $webconfig["host"]["domain"], $webconfig["host"]["ssl-only"], false);
+		setcookie("token", $user->token, time() + $webconfig["authentication"]["login-lifetime"], "/", $webconfig["host"]["domain"], $webconfig["host"]["ssl-only"], false);
     }
 
     /**

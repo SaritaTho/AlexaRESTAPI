@@ -35,6 +35,11 @@
 	}
 	$user = $auth->getCurrentUser();
 	
+	// get state
+	if (!array_key_exists("state", $request) || empty($request["state"])) {
+		$request["state"] = null;
+	}
+	
 	// check client_id
 	if (!array_key_exists("client_id", $request)) {
 		error("No client_id specified");
@@ -45,10 +50,22 @@
 		error("Invalid client_id specified. ");
 		exit;
 	}
+	if (count($client->redirect_uris) < 1) {
+		error("Client has no valid redirect uris");
+		exit;
+	}
 	
 	// get redirect uri
 	if (array_key_exists("redirect_uri", $request) && !empty($request["redirect_uri"])) {
-		if (!in_array($request["redirect_uri"], $client->redirect_uris)) {
+		$valid = false;
+		
+		foreach ($client->redirect_uris as $uri) {
+			if (substr($request["redirect_uri"], 0, strlen($uri)) == $uri) {
+				$valid = true;
+			}
+		}
+		
+		if (!$valid) {
 			error("Invalid redirect_uri");
 			exit;
 		}
@@ -68,11 +85,6 @@
 			callback_error("invalid_scope");
 			exit;
 		}
-	}
-	
-	// get state
-	if (!array_key_exists("state", $request)) {
-		$request["state"] = null;
 	}
 	
 	// check to see if it's been confirmed yet
@@ -146,8 +158,10 @@
 			"error" => $error,
 			"state" => $request["state"],
 			"error_description" => $description ];
-			
-		header("Location: " . $request["redirect_uri"] . "?" . http_build_query($cb_params));
+		
+		// add a question mark if the query hasn't been started yet
+		$addQuery = empty(parse_url($request["redirect_uri"], PHP_URL_QUERY));
+		header("Location: " . $request["redirect_uri"] . ($addQuery ? "?" : "") . http_build_query($cb_params));
 		exit;
 	}
 	
@@ -158,7 +172,7 @@
 	 * @param $expiry int The lifetime of the token, in seconds from the current time
 	 * @param $type string The type of the token. Must be valid according to RFC6749
 	 */
-	function callback_token_response($token, $expiry = 0, $type = "bearer") {
+	function callback_token_response($token, $expiry = null, $type = "bearer") {
 		global $request;
 		
 		$cb_params = [
@@ -169,9 +183,7 @@
 			"state" => $request["state"]
 		];
 		
-		var_dump($cb_params);
-		
-		header(sprintf("Location: %s?&%s", $request["redirect_uri"], http_build_query($cb_params)));
+		header("Location: " . $request["redirect_uri"] . "#" . http_build_query($cb_params));
 		exit;
 	}
 	
