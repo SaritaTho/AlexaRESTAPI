@@ -25,7 +25,7 @@
 		}
 		
 		/**
-		 * Creates an access token for a user
+		 * Creates an access token
 		 * 
 		 * @param $client int The client ID to create the token for
 		 * @param $userid int The user ID to create the token for
@@ -40,6 +40,24 @@
 				[$client, $expiry, $scope, $token, $userid, $authcode]);
 			
 			return $token;
+		}
+		
+		/**
+		 * Creates an authentication code 
+		 * 
+		 * @param $clientid int The ID of the client
+		 * @param $userid int The ID of the user
+		 * @param $scope string The scope(s) of the resulting tokens. Should conform to RFC6749 Section 3.3
+		 * @param $redirect_uri string The redirect URI to send the request back to
+		 * @returns string The resulting authentication code
+		 */
+		public function createAuthCode($clientid, $userid, $scope, $redirect_uri) {
+			$code = $this->generateTokenString();
+			$expiry_time = time() + 600;	// ten minutes
+			$this->database->pquery("INSERT INTO `oauth_authcodes` (`client`, `userid`, `scope`, `redirect_uri`,  `expiry`, `code`) VALUES (?, ?, ?, ?, ?, ?)", [
+				$clientid, $userid, $scope, $redirect_uri, $expiry_time, $code]);
+			
+			return $code;
 		}
 		
 		/**

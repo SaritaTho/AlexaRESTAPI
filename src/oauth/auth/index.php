@@ -103,8 +103,13 @@
 			// generate token based on token type
 			switch ($request["response_type"]) {
 				case "code": {
-					
-					break;
+					try {
+						$code = $oauth->createAuthCode($client-id, $user->id, $request["scope"], $request["redirect_uri"]);
+						callback_code_response($code);
+					} catch (\Exception $ex) {
+						callback_error("server_error");
+						exit();
+					}
 				}
 				case "token": {
 					try {
@@ -184,6 +189,24 @@
 		];
 		
 		header("Location: " . $request["redirect_uri"] . "#" . http_build_query($cb_params));
+		exit;
+	}
+	
+	/**
+	 * Sends an authorization code to the client
+	 * 
+	 * @param $code string The authorization code
+	 */
+	function callback_code_response($code) {
+		global $request;
+		
+		$cb_params = [
+			"code" => $code,
+			"state" => $request["state"]
+		];
+		
+		$addQuery = empty(parse_url($request["redirect_uri"], PHP_URL_QUERY));
+		header("Location: " . $request["redirect_uri"] . ($addQuery ? "?" : "") . http_build_query($cb_params));
 		exit;
 	}
 	
