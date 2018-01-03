@@ -19,9 +19,7 @@
 <html lang="en">
 <head>
 	<title>Alexa REST API</title>
-	
 	<?php include 'php/templates/basichead.php'; ?>
-	
 	<link href="/assets/css/jumbotron.css" rel="stylesheet">
 </head>
 <body>

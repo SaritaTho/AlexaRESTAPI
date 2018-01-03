@@ -52,6 +52,7 @@
 	
 	<link href="/assets/css/sticky-footer.css" rel="stylesheet">
 	<link href="/assets/css/auth.css" rel="stylesheet">
+	<link href="/assets/css/vendor/font-awesome.min.css" rel="stylesheet">
 </head>
 <body>
 	<div class="container">
@@ -68,7 +69,7 @@
 				<label><input type="checkbox" value="remember-me"> Remember me</label>
 			</div>-->
 			<p class="error notice"><strong><span class="<?php if (is_null($err)) { echo "hidden"; } ?>" id="errortext"><?php echo $err ?? "Error logging in."; ?></span></strong></p>
-			<button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button><br />
+			<button class="btn btn-lg btn-primary btn-block" type="submit">Sign in&nbsp;<i id="submit-spinner" class=""></i></button><br />
 			<p class="text-center">Or, <a href="create/<?php
 				if (array_key_exists("redirect", $_GET) && !empty($_GET["redirect"]))
 					echo "?redirect=" . urlencode($_GET["redirect"]);

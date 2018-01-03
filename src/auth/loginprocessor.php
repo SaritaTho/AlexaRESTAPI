@@ -1,6 +1,4 @@
 <?php
-	ob_start();
-	
 	// not using POST - this can happen when using silent operation
 	if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 		header('Location: /auth/');
@@ -17,36 +15,37 @@
 	$database = new Database($webconfig["database"]);
 	$auth = new Auth($database);
 	
-	// user already logged in
-	// don't do anything - handle it silently and allow for account change
-	/*if ($auth->checkUserIsLoggedIn()) {
-		complete(true, "Already logged in");
-	}*/
-	
 	// no credentials provided
 	if (!array_key_exists("email", $_POST) || !array_key_exists("password", $_POST)) {
 		complete(false, "Please provide an email and password");
 	}
 	
-	$password = $_POST['password'];
-	$email = $_POST['email'];
+	$password = filter_var($_POST['password'], FILTER_SANITIZE_STRING);
+	$email = filter_var($_POST['email'], FILTER_SANITIZE_STRING);
 	
 	try {
-		if ($auth->checkUserCredentials($email, $password)) {	// login success
+		// check user login
+		if ($auth->checkUserCredentials($email, $password)) {
 			$user = $auth->getUserFromEmail($email);
 			$auth->login($user->id);
 			
+			// send success
 			complete(true);
+			exit;
 		} else {
-			complete(false, "Invalid username or password");
+			complete(false, "Incorrect username or password");
+			exit;
 		}
 		
 	} catch (\Exception $e) {
 		error_log($e);
+		
 		if ($webconfig["development"]) {
 			complete(false, "Internal error: " . $e);
+			exit;
 		} else {
-			complete(false, "Uh-oh! Something went wrong. Try again?");
+			complete(false, "An error occured. Try again?");
+			exit;
 		}
 	}
 	
@@ -59,12 +58,13 @@
 			} else {
 				header('Location: /auth/?err=' . urlencode($message));
 			}
-			exit();
-		} else {	// normal operation
-			header('Content-Type: application/json');
-			echo json_encode(["success" => $success, "message" => $message]);
+			
+			exit;
 		}
 		
-		exit();
+		// output json response
+		header('Content-Type: application/json');
+		echo json_encode(["success" => $success, "message" => $message]);
+		exit;
 	}
 ?>
